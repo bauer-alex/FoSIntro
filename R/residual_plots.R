@@ -61,15 +61,16 @@ plot_resVSyindex <- function(model, base_size = 11, xlab = "yindex",
 #' @param base_size Size of plot elements. see \code{\link[ggplot2]{theme_bw}}.
 #' Defaults to 11.
 #' @param legend.position,legend.key.width Arguments for \code{\link[ggplot2]{theme}}
+#' @param cov.use see \code{use} argument in \code{\link[stats]{cov}}
 #' @importFrom stats cov
 #' @importFrom tidyr gather
 #' @import ggplot2
 #' @import refund
 #' @export
 plot_residAutocov <- function(model, base_size = 11, legend.position = "bottom",
-                              legend.key.width = unit(2,"lines")) {
+                              legend.key.width = unit(2,"lines"), cov.use = "everything") {
   yindex <- model$pffr$yind
-  dat <- data.frame(time = yindex, cov(refund:::residuals.pffr(model)))
+  dat <- data.frame(time = yindex, cov(refund:::residuals.pffr(model), use = cov.use))
   colnames(dat)[-1] <- yindex
   dat <-  tidyr::gather(dat, key = "time2", value = "covariance", 2:ncol(dat))
   dat$time2 <- as.numeric(dat$time2)

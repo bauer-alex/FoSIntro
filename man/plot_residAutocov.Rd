@@ -5,7 +5,7 @@
 \title{Residual autocovariance plot for \code{\link[refund]{pffr}} models}
 \usage{
 plot_residAutocov(model, base_size = 11, legend.position = "bottom",
-  legend.key.width = unit(2, "lines"))
+  legend.key.width = unit(2, "lines"), cov.use = "everything")
 }
 \arguments{
 \item{model}{Function-on-scalar model fitted with \code{\link[refund]{pffr}}}
@@ -14,6 +14,8 @@ plot_residAutocov(model, base_size = 11, legend.position = "bottom",
 Defaults to 11.}
 
 \item{legend.position, legend.key.width}{Arguments for \code{\link[ggplot2]{theme}}}
+
+\item{cov.use}{see \code{use} argument in \code{\link[stats]{cov}}}
 }
 \description{
 Plot the autocovariance of the residuals over the functional domain (e.g. time) for 
