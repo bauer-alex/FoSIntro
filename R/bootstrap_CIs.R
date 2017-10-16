@@ -51,7 +51,7 @@ bootstrap_pffr <- function(type = "parametric", B = 1000, formula, data, model =
       data_b[,param_yvar] <- FoSIntro::simulate_pffr(model, sim_fun = param_simFun, y_minValue = param_yMinValue)
     } else if (type == "nonparametric")
       data_b <- data[sample(seq_len(nrow(data)), size = nrow(data), replace = TRUE),]
-    model_b <- refund::pffr(formula, data = data_b, ...)
+    model_b <- pffr(formula, data = data_b, ...)
     if(!is.null(log_file))
       sink()
     return(no.plot(model_b)) # save returned value of plot.gam while suppressing plot creation
