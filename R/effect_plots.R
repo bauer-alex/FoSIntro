@@ -278,10 +278,12 @@ plot_predictions <- function(model, newdata, ci_type = "none", ci_alpha = 0.05, 
   }
   plot_data$yindex <- as.numeric(plot_data$yindex)
 
-  if (missing(main))
+  if (missing(main)) {
+    alpha_label <- as.character(round(100 - 100*ci_alpha,1))
     main <- paste0("predictions", ifelse(ci_type == "none", "",
-                                         ifelse(ci_type == "ci", "\nwith 95% pointwise confidence intervals\nfor the predicted mean",
-                                                "\nwith 95% pointwise prediction intervals")))
+                                         ifelse(ci_type == "ci", paste0("\nwith ",alpha_label,"% pointwise confidence intervals\nfor the predicted mean"),
+                                                paste0("\nwith ",alpha_label,"% pointwise prediction intervals"))))
+  }
   if (class(ylabels) == "waiver" & class(ybreaks) != "waiver") # if only ybreaks are specified
     ylabels <- as.character(ybreaks)
   if (is.null(ylim) & class(ybreaks) != "waiver")
