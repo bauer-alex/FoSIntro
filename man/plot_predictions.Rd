@@ -9,7 +9,7 @@ plot_predictions(model, newdata, ci_type = "none", labels = NULL,
   rev_cols = FALSE, base_size = 11, legend_symbol_size = 2,
   type = "response", log10 = FALSE, plot.margin = unit(rep(5.5, 4),
   "points"), hline, ybreaks = waiver(), ylabels = waiver(),
-  xlab = "yindex", ylab = "prediction", main, ylim = NULL, lwd = 2)
+  xlab = "yindex", ylab = "prediction", main, ylim = NULL, lwd = 1)
 }
 \arguments{
 \item{model}{Function-on-scalar model fitted with \code{\link[refund]{pffr}}}

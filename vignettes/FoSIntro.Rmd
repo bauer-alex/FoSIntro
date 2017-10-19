@@ -161,14 +161,14 @@ plot_bootstrapCIs(model, CIs_list, select = 2, ylab = "time [s]")
 ```{r uncertainty 6}
 newdata <- data[1,colnames(data) != "ground_velocity"]
 plot_predictions(model, newdata, log10 = FALSE, ci_type = "ci", # ybreaks = ybreaks,
-                 xlab = "time [s]", ylab = "prediction on original scale", lwd = 1)
+                 xlab = "time [s]", ylab = "prediction on original scale")
 ```
 
 \pagebreak
 \subsection{Prediction intervals}
 ```{r uncertainty 7}
 plot_predictions(model, newdata, log10 = FALSE, ci_type = "pi",
-                 xlab = "time [s]", ylab = "prediction on original scale", lwd = 1)
+                 xlab = "time [s]", ylab = "prediction on original scale")
 ```
 
 

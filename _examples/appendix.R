@@ -110,7 +110,7 @@ plot_1D(m1, select = 1, xlab = "time [s]")
 newdata <- data.frame("intercept" = 1)
 ybreaks <- 10^c(-2,-1,0,1)
 plot_predictions(m1, newdata, log10 = TRUE,
-                 ylim = c(.01,10), ybreaks = ybreaks, hline = ybreaks,
+                 ylim = c(.01,10), ybreaks = ybreaks, hline = ybreaks, lwd = 2,
                  xlab = "time [s]", ylab = "prediction on log10-scale",
                  main = "Overall mean ground velocity\nbased on an intercept-only model")
 
@@ -127,7 +127,7 @@ newdata <- data.frame("distance_catmedium" = c(0,1,0),
                       "distance_catsmall" = c(0,0,1))
 labels <- c("small","medium","large")
 plot_predictions(m2, newdata, log10 = TRUE,
-                 xlab = "time [s]", ylab = "predictions on log10-scale",
+                 xlab = "time [s]", ylab = "predictions on log10-scale", lwd = 2,
                  legend_title = "hypocentral distance", labels = labels,
                  col_vector = c("#08519C","#3182BD","#9ECAE1"), rev_cols = TRUE)
 
@@ -196,11 +196,11 @@ plot_bootstrapCIs(model, CIs_list, select = 2, ylab = "time [s]")
 ### 2) Confidence intervals for the predicted mean
 newdata <- data[1,colnames(data) != "ground_velocity"]
 plot_predictions(model, newdata, log10 = FALSE, ci_type = "ci", # ybreaks = ybreaks,
-                 xlab = "time [s]", ylab = "prediction on original scale", lwd = 1)
+                 xlab = "time [s]", ylab = "prediction on original scale")
 
 ### 3) prediction intervals
 plot_predictions(model, newdata, log10 = FALSE, ci_type = "pi",
-                 xlab = "time [s]", ylab = "prediction on original scale", lwd = 1)
+                 xlab = "time [s]", ylab = "prediction on original scale")
 # -> the pointwise prediction intervals in our application are much
 #    wider as the pointwise confidence intervals for the predicted mean!
 #    This makes sense: We can predict the MEAN expected ground velocity very

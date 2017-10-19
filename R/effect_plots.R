@@ -252,7 +252,7 @@ plot_predictions <- function(model, newdata, ci_type = "none", labels = NULL, le
                              col_palette = "Set1", col_vector = NULL, rev_cols = FALSE,
                              base_size = 11, legend_symbol_size = 2, type = "response", log10 = FALSE,
                              plot.margin = unit(rep(5.5,4),"points"), hline, ybreaks = waiver(), ylabels = waiver(),
-                             xlab = "yindex", ylab = "prediction", main, ylim = NULL, lwd = 2) {
+                             xlab = "yindex", ylab = "prediction", main, ylim = NULL, lwd = 1) {
   if (ci_type == "none")
     fit <- as.data.frame(refund:::predict.pffr(model, newdata, type = type))
   else if (ci_type %in% c("ci","pi")) {
