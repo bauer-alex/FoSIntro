@@ -4,12 +4,13 @@
 \alias{plot_predictions}
 \title{Plot model predictions for \code{\link[refund]{pffr}} models}
 \usage{
-plot_predictions(model, newdata, ci_type = "none", labels = NULL,
-  legend_title = "group", col_palette = "Set1", col_vector = NULL,
-  rev_cols = FALSE, base_size = 11, legend_symbol_size = 2,
-  type = "response", log10 = FALSE, plot.margin = unit(rep(5.5, 4),
-  "points"), hline, ybreaks = waiver(), ylabels = waiver(),
-  xlab = "yindex", ylab = "prediction", main, ylim = NULL, lwd = 1)
+plot_predictions(model, newdata, ci_type = "none", ci_alpha = 0.05,
+  labels = NULL, legend_title = "group", col_palette = "Set1",
+  col_vector = NULL, rev_cols = FALSE, base_size = 11,
+  legend_symbol_size = 2, type = "response", log10 = FALSE,
+  plot.margin = unit(rep(5.5, 4), "points"), hline, ybreaks = waiver(),
+  ylabels = waiver(), xlab = "yindex", ylab = "prediction", main,
+  ylim = NULL, lwd = 1)
 }
 \arguments{
 \item{model}{Function-on-scalar model fitted with \code{\link[refund]{pffr}}}
@@ -19,6 +20,9 @@ plot_predictions(model, newdata, ci_type = "none", labels = NULL,
 \item{ci_type}{One of \code{"none"} (default; no confidence bands), \code{"ci"}
 (pointwise confidence intervals for the predicted mean) or \code{"pi"} (pointwise
 prediction intervals), specifying which type of confidence bands should be plotted}
+
+\item{ci_alpha}{Alpha to be used for confidence or prediction intervals.
+Defaults to 0.05, i.e. 95\% intervals.}
 
 \item{labels}{Labels vector with length equal to \code{nrow(newdata)}.
 Used for the legend.}

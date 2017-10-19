@@ -222,6 +222,8 @@ plot_2Dheatmap <- function(model, plot_type = 1, plot_ci = TRUE, plot_ci_type = 
 #' @param ci_type One of \code{"none"} (default; no confidence bands), \code{"ci"}
 #' (pointwise confidence intervals for the predicted mean) or \code{"pi"} (pointwise
 #' prediction intervals), specifying which type of confidence bands should be plotted
+#' @param ci_alpha Alpha to be used for confidence or prediction intervals.
+#' Defaults to 0.05, i.e. 95\% intervals.
 #' @param labels Labels vector with length equal to \code{nrow(newdata)}.
 #' Used for the legend.
 #' @param legend_title Title of legend
@@ -248,7 +250,7 @@ plot_2Dheatmap <- function(model, plot_type = 1, plot_ci = TRUE, plot_ci_type = 
 #' @import ggplot2
 #' @import refund
 #' @export
-plot_predictions <- function(model, newdata, ci_type = "none", labels = NULL, legend_title = "group",
+plot_predictions <- function(model, newdata, ci_type = "none", ci_alpha = 0.05, labels = NULL, legend_title = "group",
                              col_palette = "Set1", col_vector = NULL, rev_cols = FALSE,
                              base_size = 11, legend_symbol_size = 2, type = "response", log10 = FALSE,
                              plot.margin = unit(rep(5.5,4),"points"), hline, ybreaks = waiver(), ylabels = waiver(),
@@ -291,8 +293,8 @@ plot_predictions <- function(model, newdata, ci_type = "none", labels = NULL, le
       sigma2 <- var(as.vector(refund:::residuals.pffr(model, type = "response"))) # error variance
       plot_data %<>% mutate(se = sqrt(plot_data$se^2 + sigma2))
     }
-    plot_data %<>% mutate(interval_lower = plot_data$prediction - qnorm(0.975)*plot_data$se,
-                          interval_upper = plot_data$prediction + qnorm(0.975)*plot_data$se)
+    plot_data %<>% mutate(interval_lower = plot_data$prediction - qnorm(1-(ci_alpha/2))*plot_data$se,
+                          interval_upper = plot_data$prediction + qnorm(1-(ci_alpha/2))*plot_data$se)
     # if y is plotted on the log10 scale and the intervals are <0, then set those values to 0.00001
     if (log10 & any(plot_data$interval_lower < 0)) {
       warning("Confidence/Prediction interval lower boundaries < 0 are set to 0.00001 in order to plot on log10 scale!")
