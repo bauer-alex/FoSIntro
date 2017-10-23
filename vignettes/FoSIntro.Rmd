@@ -24,7 +24,7 @@ knitr::opts_chunk$set(echo = TRUE,
 
 \pagebreak
 \section{Introduction}
-This vignette gives an overview of the functionality provided with the \texttt{FoSIntro} \texttt{R} package, which is the accompanying package to Bauer et al. (2018) - ''An introduction to semiparametric function-on-scalar regression''.
+This vignette gives an overview of the functionality provided with the \texttt{FoSIntro} \texttt{R} package, which is the accompanying package to Bauer et al. (2017) - ''An Introduction to Semiparametric Function-on-scalar Regression''.
 
 
 All examples from the paper can be reproduced using the code in the \texttt{\_examples} folder on the \href{https://github.com/bauer-alex/FoSIntro}{GitHub repository}. This vignette instead does not reproduce each single plot of the paper, but instead gives an overview of the functions provided by the package, which are mainly convenient effect/prediction/residual plot functions for function-on-scalar models fitted with \texttt{pffr} (from the \texttt{refund} package), but also comprise functions to perform (non)parametric bootstrapping to retrieve confidence intervals for smooth effects from \texttt{pffr} models. Additionally, for the sake of completeness, also the overview of how to apply all hypothesis tests listed in the paper is given here.
@@ -115,7 +115,6 @@ plot_2Dheatmap(model, select = 2,
                xlab = "hypocentral distance", ylab = "time [s]")
 ```
 
-\pagebreak
 \subsection{Bootstrapped confidence intervals}
 ```{r uncertainty 2}
 B <- 1000 # bootstrap iterations (note that this takes several hours - for the
@@ -160,7 +159,7 @@ plot_bootstrapCIs(model, CIs_list, select = 2, ylab = "time [s]")
 \subsection{Confidence intervals for the predicted mean}
 ```{r uncertainty 6}
 newdata <- data[1,colnames(data) != "ground_velocity"]
-plot_predictions(model, newdata, log10 = FALSE, ci_type = "ci", # ybreaks = ybreaks,
+plot_predictions(model, newdata, log10 = FALSE, ci_type = "ci",
                  xlab = "time [s]", ylab = "prediction on original scale")
 ```
 
