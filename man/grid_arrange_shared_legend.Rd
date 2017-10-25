@@ -31,4 +31,7 @@ Silently returns the plot object
 \description{
 Function to create a grid of multiple \code{\link[ggplot2]{ggplot}}s sharing
 the same legend.
+Note: This function is based on a code example shown on the
+\href{https://github.com/tidyverse/ggplot2/wiki/Share-a-legend-between-two-ggplot2-graphs}{tidyverse GitHub page}
+(last access: 25.10.2017)
 }
