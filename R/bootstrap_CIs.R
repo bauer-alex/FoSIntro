@@ -99,23 +99,35 @@ calc_bootstrapCIs <- function(bs_results, alpha = 0.05) {
 #'
 #' Function to calculate a pointwise confidence interval (CI) band for a single
 #' smooth term, based on the output of \code{\link{bootstrap_pffr}}.
+#' This function is normally called more comfortably by using \code{\link{calc_bootstrapCIs}}.
+#' However, compared to the latter function, it also offers the additional
+#' possibility to compute CIs for differences of two smooths.
 #' NOTE: Only 1D and 2D smooths are currently handled correctly!
 #'
 #' @param bs_results Output of function \code{\link{bootstrap_pffr}}
-#' @param select Index of smooth term to be looked at
+#' @param select Index of smooth term to be looked at. If a vector of length two
+#' is passed, then the CI will be computed for the difference of the second smooth
+#' minus the first smooth.
 #' @param alpha \code{(1-alpha)} CIs are calculated. The default 0.05 leads to 95\% CIs
 #' @importFrom stats quantile
+#' @export
 calc_singleBootstrapCI <- function(bs_results, select, alpha = 0.05) {
-  x <- lapply(bs_results, function(x) x[[select]])
+  x <- lapply(bs_results, function(x) x[[select[1]]])
+  if (length(select) == 2)
+    x2 <- lapply(bs_results, function(x) x[[select[2]]])
   B <- length(x)
   fit_length <- length(x[[1]]$fit)
   q <- c(alpha/2, 1-alpha/2)
-  if(!("y" %in% names(x[[1]]))) # if 1D smooth effect
+  if(!("y" %in% names(x[[1]]))) # if 1D smooth effect(s)
     y <- NULL
-  else # if 2D smooth effect
+  else # if 2D smooth effect(s)
     y <- x[[1]]$y
   fits <- lapply(seq_len(fit_length), function(i) {
-    sapply(seq_len(B), function(b) x[[b]]$fit[i])
+    if (length(select) == 1) {
+      return(sapply(seq_len(B), function(b) x[[b]]$fit[i]))
+    } else if (length(select) == 2) {
+      return(sapply(seq_len(B), function(b) x2[[b]]$fit[i] - x[[b]]$fit[i]))
+    }
   })
   # calculate pointwise CIs
   fitCI_lower <- sapply(fits, function(f) unname(stats::quantile(f, probs = q[1])))

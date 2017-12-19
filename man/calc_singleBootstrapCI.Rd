@@ -9,12 +9,17 @@ calc_singleBootstrapCI(bs_results, select, alpha = 0.05)
 \arguments{
 \item{bs_results}{Output of function \code{\link{bootstrap_pffr}}}
 
-\item{select}{Index of smooth term to be looked at}
+\item{select}{Index of smooth term to be looked at. If a vector of length two
+is passed, then the CI will be computed for the difference of the second smooth
+minus the first smooth.}
 
 \item{alpha}{\code{(1-alpha)} CIs are calculated. The default 0.05 leads to 95\% CIs}
 }
 \description{
 Function to calculate a pointwise confidence interval (CI) band for a single
 smooth term, based on the output of \code{\link{bootstrap_pffr}}.
+This function is normally called more comfortably by using \code{\link{calc_bootstrapCIs}}.
+However, compared to the latter function, it also offers the additional
+possibility to compute CIs for differences of two smooths.
 NOTE: Only 1D and 2D smooths are currently handled correctly!
 }

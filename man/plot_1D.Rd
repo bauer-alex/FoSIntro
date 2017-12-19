@@ -21,7 +21,13 @@ plot_1D(model, plot_type = 1, plot_ci = TRUE, alpha = 0.05, CIs_list,
 \item{CIs_list}{Output of function \code{\link{calc_bootstrapCIs}}.
 Only necessary if \code{plot_type = 2}.}
 
-\item{select}{Index of smooth term to be plotted.}
+\item{select}{Index of smooth term to be plotted. If a vector of length two
+is passed, then the difference of the second smooth minus the first smooth will
+be plotted. Note that CIs from \code{plot_type == 1} are suppressed in this case.
+However, using the \code{CIs_list} argument one can still plot boostrapped
+CIs for such a difference of smooths, by passing a list with only one CI element.
+Such a CI element can be obtained by using \code{\link{calc_singleBootstrapCI}},
+using the \code{select} argument.}
 
 \item{xlab, ylab, ylim, main}{Optional parameters for overwriting the default
 plot parameters}

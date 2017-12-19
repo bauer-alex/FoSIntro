@@ -13,7 +13,13 @@
 #' 95\% CIs. Only used if \code{plot_type = 1}.
 #' @param CIs_list Output of function \code{\link{calc_bootstrapCIs}}.
 #' Only necessary if \code{plot_type = 2}.
-#' @param select Index of smooth term to be plotted.
+#' @param select Index of smooth term to be plotted. If a vector of length two
+#' is passed, then the difference of the second smooth minus the first smooth will
+#' be plotted. Note that CIs from \code{plot_type == 1} are suppressed in this case.
+#' However, using the \code{CIs_list} argument one can still plot boostrapped
+#' CIs for such a difference of smooths, by passing a list with only one CI element.
+#' Such a CI element can be obtained by using \code{\link{calc_singleBootstrapCI}},
+#' using the \code{select} argument.
 #' @param xlab,ylab,ylim,main Optional parameters for overwriting the default
 #' plot parameters
 #' @param effect_label Used in the main title of the plot as
@@ -32,34 +38,52 @@ plot_1D <- function(model, plot_type = 1, plot_ci = TRUE, alpha = 0.05, CIs_list
     stop("Please specify 'CIs_list'! Necessary as plot_type = 2.")
   if(missing(select))
     stop("Please specify which model term should be plotted using the 'select' argument!")
-
-    plotObject <- no.plot(model)
+  
+  plotObject <- no.plot(model)
+  if (length(select) == 1) {
     plotObject <- plotObject[[select]]
     plot_data <- data.frame("x" = plotObject$x,
                             "fit" = plotObject$fit)
-    if (plot_type == 1) {
+  } else if (length(select) == 2) {
+    plot_data <- data.frame("x" = plotObject[[select[1]]]$x,
+                            "fit" = plotObject[[select[2]]]$fit - plotObject[[select[1]]]$fit)
+    plotObject <- plotObject[[select[1]]]
+    if (missing(main))
+      main <- paste0("Difference between smooths ",select[2]," and ",select[1])
+    if (plot_type != 2)
+      plot_ci <- FALSE
+  }
+  if (plot_ci) {
+    if (plot_type == 1 & length(select) == 1) {
       plot_data$ci_lower <- plotObject$fit - qnorm(1-alpha/2)*plotObject$se
       plot_data$ci_upper <- plotObject$fit + qnorm(1-alpha/2)*plotObject$se
       if(missing(main)) {
         main <- ifelse(missing(effect_label), plotObject$ylab, effect_label)
         if (plot_ci)
           main <- paste0(main, "\nwith ",100-100*alpha,"% Marra & Wood (2012) confidence intervals")
-    }
-  } else if (plot_type == 2) {
-    ci <- CIs_list[[select]]
-    plot_data$ci_lower <- ci$ci_lower
-    plot_data$ci_upper <- ci$ci_upper
-    if(missing(main)) {
-      effect_label <- ifelse(missing(effect_label), plotObject$ylab, effect_label)
-      main <- paste0(effect_label, "\nwith ", ci$ci_type, " ", 100-100*ci$alpha, "% confidence intervals")
+      }
+    } else if (plot_type == 2) {
+      if (length(select) == 1) {
+        ci <- CIs_list[[select]]
+      } else if (length(select) == 2)
+        ci <- CIs_list[[1]]
+      plot_data$ci_lower <- ci$ci_lower
+      plot_data$ci_upper <- ci$ci_upper
+      if(missing(main)) {
+        effect_label <- ifelse(missing(effect_label), plotObject$ylab, effect_label)
+        main <- paste0(effect_label, "\nwith ", ci$ci_type, " ", 100-100*ci$alpha, "% confidence intervals")
+      }
     }
   }
-
+  if (!plot_ci)
+    main <- ifelse(missing(main), NULL, main)
+  
   xlab <- ifelse(missing(xlab), plotObject$xlab, xlab)
-  ylab <- ifelse(missing(ylab), plotObject$ylab, ylab)
-
-  poly_dat <- data.frame("x" = c(plot_data$x, rev(plot_data$x)),
-                         "y" = c(plot_data$ci_lower, rev(plot_data$ci_upper)))
+  ylab <- ifelse(missing(ylab), ifelse(length(select) == 1, plotObject$ylab, "Difference"), ylab)
+  
+  if (plot_ci)
+    poly_dat <- data.frame("x" = c(plot_data$x, rev(plot_data$x)),
+                           "y" = c(plot_data$ci_lower, rev(plot_data$ci_upper)))
   gg <- ggplot(plot_data, aes_string(x = "x", y = "fit"))
   if(!(plot_type == 1 & !plot_ci)) {
     gg <- gg + geom_polygon(data = poly_dat, aes_string(x = "x", y = "y"), fill = gray(0.75)) +
@@ -140,7 +164,7 @@ plot_2Dheatmap <- function(model, plot_type = 1, plot_ci = TRUE, plot_ci_type = 
     stop("Please specify 'CIs_list'! Necessary as plot_type = 2.")
   if(missing(select))
     stop("Please specify which model term should be plotted using the 'select' argument!")
-
+  
   plotObject <- no.plot(model)
   plotObject <- plotObject[[select]]
   plot_data <- expand.grid(plotObject$x,
@@ -163,10 +187,10 @@ plot_2Dheatmap <- function(model, plot_type = 1, plot_ci = TRUE, plot_ci_type = 
       main <- paste0(effect_label, "\nwith ", ci$ci_type, " ", 100-100*ci$alpha, "% confidence intervals")
     }
   }
-
+  
   xlab <- ifelse(missing(xlab), plotObject$xlab, xlab)
   ylab <- ifelse(missing(ylab), plotObject$ylab, ylab)
-
+  
   if (missing(legend_limits))
     legend_limits <- c(min(plot_data$ci_lower), max(plot_data$ci_upper))
   gg_fit <- ggplot(plot_data, aes_string(x="Var1", y="Var2", fill = "fit")) + geom_tile() +
@@ -191,7 +215,7 @@ plot_2Dheatmap <- function(model, plot_type = 1, plot_ci = TRUE, plot_ci_type = 
       scale_fill_gradient2(limits = legend_limits, low = lowCol, mid = "white", high = highCol) +
       geom_contour(aes_string(x="Var1", y="Var2", z = "ci_upper"), colour = "darkgrey") +
       theme_bw(base_size) + theme(plot.title = element_text(hjust = 0.5), legend.position = legend_position, ...)
-
+    
     if (plot_ci_type == "lower")
       (gg <- gg_lower)
     else if (plot_ci_type == "upper")
@@ -277,7 +301,7 @@ plot_predictions <- function(model, newdata, ci_type = "none", ci_alpha = 0.05, 
     plot_data$se <- se_fit_data$se
   }
   plot_data$yindex <- as.numeric(plot_data$yindex)
-
+  
   if (missing(main)) {
     alpha_label <- as.character(round(100 - 100*ci_alpha,1))
     main <- paste0("predictions", ifelse(ci_type == "none", "",
@@ -288,7 +312,7 @@ plot_predictions <- function(model, newdata, ci_type = "none", ci_alpha = 0.05, 
     ylabels <- as.character(ybreaks)
   if (is.null(ylim) & class(ybreaks) != "waiver")
     ylim <- range(ybreaks) # if ybreaks are specified, but ylim not
-
+  
   # create dataset with confidence/prediction intervals
   if (ci_type %in% c("ci","pi")) {
     if (ci_type == "pi") {
@@ -306,7 +330,7 @@ plot_predictions <- function(model, newdata, ci_type = "none", ci_alpha = 0.05, 
                           "label" = factor(c(as.character(plot_data$label), rev(as.character(plot_data$label)))),
                           "interval_border" = c(plot_data$interval_lower, rev(plot_data$interval_upper)))
   }
-
+  
   gg <- ggplot(plot_data, aes_string(x="yindex", y="prediction", color="label"))
   if (ci_type %in% c("ci","pi")) {
     gg <- gg + geom_polygon(data = polydat, aes_string(x = "yindex", y = "interval_border", fill = "label", col = NULL), show.legend = FALSE, alpha = 0.3)
@@ -385,7 +409,7 @@ plot_predVSobs <- function(model, data, yvar, yvar_label, type = "response", log
   if (type == "link")
     obs <- log(obs)
   if (missing(ylabels) & !missing(ybreaks)) ylabels <- as.character(ybreaks)
-
+  
   plot_data <- rbind(obs, p)
   plot_data$type <- c("observation","prediction")
   plot_data <- tidyr::gather(plot_data, key = "yindex", value = "y", -type)
