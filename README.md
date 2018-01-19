@@ -3,7 +3,7 @@
 Overview
 ------------
 
-This R package is the accompanying package to Bauer et al. (2017) - ''An introduction to semiparametric function-on-scalar regression''.
+This R package is the accompanying package to Bauer et al. (2018) - ''An introduction to semiparametric function-on-scalar regression''.
 
 A vignette giving an overview of the functions of the package can be found <a href='http://bauer.userweb.mwn.de/files/FoSIntro.pdf' target='_blank'>here</a>.
 
