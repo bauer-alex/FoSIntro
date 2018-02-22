@@ -161,20 +161,25 @@ plot_residsVSxy <- function(model, dat_xy, breaks, labels_cut = NULL, base_size 
     stop("At least one mean of a seismogram has an absolute value bigger than one -> Please edit the breaks accordingly!")
   # Plot
   resids_kat <- cut(dat_xy$resids_mean, breaks = breaks, labels = labels_cut)
-  myColors <- rev(RColorBrewer::brewer.pal(length(levels(resids_kat)), "RdBu"))
-  myColors[3] <- gray(0.9) # change neutral color to make it visible on b/w print
-  myColors[2] <- paste0(myColors[2],"99") # add slight transparency of points
-  myShapes <- c(15,15,15,18,18)
-  mySizes <- c(2,2,3,2,2)
-  names(myColors) <- names(myShapes) <- names(mySizes) <- labels_cut
+  colors <- rev(RColorBrewer::brewer.pal(length(levels(resids_kat)), "RdBu"))
+  index_neutralCat <- which(sapply(1:(length(breaks)-1), function(i) (0 > breaks[i]) && (0 < breaks[i+1])))
+  colors[index_neutralCat] <- gray(0.9) # change neutral color to make it visible on b/w print
+  colors[1:(index_neutralCat-1)] <- paste0(colors[1:(index_neutralCat-1)],"99") # add slight transparency of points
+  shapes <- c(rep(15,index_neutralCat), rep(18, length(colors) - index_neutralCat))
+  sizes <- rep(2,length(colors))
+  sizes[index_neutralCat] <- 3
+  
+  names(colors) <- labels_cut
+  names(shapes) <- labels_cut
+  names(sizes) <- labels_cut
 
   gg <- ggplot(dat_xy, aes_string(x="x", y="y", color="resids_kat")) +
     geom_point(mapping = aes_string(shape="resids_kat", size="resids_kat")) + theme_bw(base_size = base_size) +
     theme(legend.key.height = unit(2,"line"), plot.title = element_text(hjust = 0.5),
           axis.title = element_blank(), axis.text = element_blank(), axis.ticks = element_blank(), ...) +
-    scale_colour_manual(name="Residual mean", values=myColors, labels=labels_cut) +
-    scale_shape_manual(name="Residual mean", values=myShapes, labels=labels_cut) +
-    scale_size_manual(name="Residual mean", values=mySizes, labels=labels_cut) +
+    scale_colour_manual(name="Residual mean", values=colors) +
+    scale_shape_manual(name="Residual mean", values=shapes) +
+    scale_size_manual(name="Residual mean", values=sizes) +
     ggtitle("Mean residuals over space")
   if (!is.null(mark_location))
     gg <- gg + geom_point(data = dat_xy[mark_location,c("x","y")],
