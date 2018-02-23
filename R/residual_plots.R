@@ -62,13 +62,14 @@ plot_resVSyindex <- function(model, base_size = 11, xlab = "yindex",
 #' Defaults to 11.
 #' @param legend.position,legend.key.width Arguments for \code{\link[ggplot2]{theme}}
 #' @param cov.use see \code{use} argument in \code{\link[stats]{cov}}
+#' @param ... Additional arguments passed to \code{\link[ggplot2]{scale_fill_gradient}}
 #' @importFrom stats cov
 #' @importFrom tidyr gather
 #' @import ggplot2
 #' @import refund
 #' @export
 plot_residAutocov <- function(model, base_size = 11, legend.position = "bottom",
-                              legend.key.width = unit(2,"lines"), cov.use = "everything") {
+                              legend.key.width = unit(2,"lines"), cov.use = "everything", ...) {
   yindex <- model$pffr$yind
   dat <- data.frame(time = yindex, cov(refund:::residuals.pffr(model), use = cov.use))
   colnames(dat)[-1] <- yindex
@@ -77,7 +78,7 @@ plot_residAutocov <- function(model, base_size = 11, legend.position = "bottom",
   ggplot(dat, aes_string(x="time", y="time2")) +
     geom_tile(aes_string(fill = "covariance")) +
     xlab("time [s]") + ylab("time [s]") +
-    scale_fill_gradient(low = "grey90", high = "darkblue") +
+    scale_fill_gradient(low = "grey90", high = "darkblue", ...) +
     theme_bw(base_size = base_size) +
     theme(plot.title = element_text(hjust = 0.5),
           legend.position = legend.position,
