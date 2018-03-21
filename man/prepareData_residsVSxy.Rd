@@ -4,7 +4,7 @@
 \alias{prepareData_residsVSxy}
 \title{Data preparation for \code{\link{plot_residsVSxy}}}
 \usage{
-prepareData_residsVSxy(model, data, yvar, xCoord_var, yCoord_var)
+prepareData_residsVSxy(model, data, yvar, xCoord_var, yCoord_var, ...)
 }
 \arguments{
 \item{model}{Function-on-scalar model fitted with \code{\link[refund]{pffr}}}
@@ -15,6 +15,8 @@ prepareData_residsVSxy(model, data, yvar, xCoord_var, yCoord_var)
 
 \item{xCoord_var, yCoord_var}{name of the variables containing location information
 for the x and y axis of the measurements}
+
+\item{...}{Additional arguments passed to \code{\link[refund]{predict.pffr}}}
 }
 \description{
 Prepare the data set containing the mean residuals per measurement location

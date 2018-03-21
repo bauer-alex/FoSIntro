@@ -101,16 +101,17 @@ plot_residAutocov <- function(model, base_size = 11, legend.position = "bottom",
 #' @param yvar name of the response variable in \code{model}
 #' @param xCoord_var,yCoord_var name of the variables containing location information
 #' for the x and y axis of the measurements
+#' @param ... Additional arguments passed to \code{\link[refund]{predict.pffr}}
 #' @import dplyr
 #' @import refund
 #' @export
-prepareData_residsVSxy <- function(model, data, yvar, xCoord_var, yCoord_var) {
+prepareData_residsVSxy <- function(model, data, yvar, xCoord_var, yCoord_var, ...) {
   colnames(data)[colnames(data) == xCoord_var] <- "x"
   colnames(data)[colnames(data) == yCoord_var] <- "y"
   data$location <- factor(paste0(data$x,"_",data$y))
   y <- data[,yvar]
   dat <- data[,colnames(data) != yvar] # the y variable has to be excluded to call predict()
-  dat$fitted <- refund:::predict.pffr(model, newdata = dat, type = "response")
+  dat$fitted <- refund:::predict.pffr(model, newdata = dat, type = "response", ...)
   dat$residuals <- y - dat$fitted
   # Create a dataset with 1 row per location
   dat_res <- dat[,!(colnames(dat) %in% c("residuals","fitted"))] %>%
