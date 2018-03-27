@@ -230,7 +230,7 @@ plot_2Dheatmap <- function(model, plot_type = 1, plot_ci = TRUE, plot_ci_type = 
   }
   if (plot_ci == FALSE | plot_ci_type != "all")
     print(gg)
-  invisible(gg) # silently return plot object
+  return(gg) # return plot object
 }
 
 
