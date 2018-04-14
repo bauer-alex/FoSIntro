@@ -14,10 +14,10 @@
 #' @import ggplot2
 #' @import refund
 #' @export
-plot_resVSfitted <- function(model, base_size = 11, xlab = "fitted values",
+plot_resVSfitted <- function(model, type = "response", base_size = 11, xlab = "fitted values",
                              ylab = "residuals", main = "Residuals vs fitted values\nHeatmap of binned points",
                              legend_limits = NULL, legend_breaks = waiver(), ...) {
-  plot_data <- data.frame("fitted" = as.vector(refund:::fitted.pffr(model)),
+  plot_data <- data.frame("fitted" = as.vector(refund:::predict.pffr(model, type = "response")),
                           "residuals" = as.vector(refund:::residuals.pffr(model, type = "response")))
   ggplot(plot_data, aes_string(x="fitted", y="residuals")) + stat_binhex(color = gray(0.7), bins = 30) +
     scale_fill_gradientn(colours=c(gray(0.9),"darkblue"),name = "Frequency",
