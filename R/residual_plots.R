@@ -5,6 +5,7 @@
 #' \code{\link[refund]{pffr}} against its fitted values.
 #'
 #' @param model Function-on-scalar model fitted with \code{\link[refund]{pffr}}
+#' @param type See \code{\link[mgcv]{residuals.gam}}
 #' @param base_size Size of plot elements. see \code{\link[ggplot2]{theme_bw}}.
 #' Defaults to 11.
 #' @param xlab,ylab,main Optional plot annotation
@@ -15,10 +16,12 @@
 #' @import refund
 #' @export
 plot_resVSfitted <- function(model, type = "response", base_size = 11, xlab = "fitted values",
-                             ylab = "residuals", main = "Residuals vs fitted values\nHeatmap of binned points",
+                             ylab = NULL, main = "Residuals vs fitted values\nHeatmap of binned points",
                              legend_limits = NULL, legend_breaks = waiver(), ...) {
   plot_data <- data.frame("fitted" = as.vector(refund:::predict.pffr(model, type = "response")),
-                          "residuals" = as.vector(refund:::residuals.pffr(model, type = "response")))
+                          "residuals" = as.vector(refund:::residuals.pffr(model, type = type)))
+  if (is.null(ylab))
+    ylab <- paste(type, "residuals")
   ggplot(plot_data, aes_string(x="fitted", y="residuals")) + stat_binhex(color = gray(0.7), bins = 30) +
     scale_fill_gradientn(colours=c(gray(0.9),"darkblue"),name = "Frequency",
                          limits = legend_limits, breaks = legend_breaks) +
@@ -37,13 +40,15 @@ plot_resVSfitted <- function(model, type = "response", base_size = 11, xlab = "f
 #' @import ggplot2
 #' @import refund
 #' @export
-plot_resVSyindex <- function(model, base_size = 11, xlab = "yindex",
-                             ylab = "residuals", main = "Residuals vs yindex\nHeatmap of binned points",
+plot_resVSyindex <- function(model, type = "response", base_size = 11, xlab = "yindex",
+                             ylab = NULL, main = "Residuals vs yindex\nHeatmap of binned points",
                              legend_limits = NULL, legend_breaks = waiver(), ...) {
   yindex <- model$pffr$yind
-  resid_matrix <- refund:::residuals.pffr(model, type = "response")
+  resid_matrix <- refund:::residuals.pffr(model, type = type)
   plot_data <- data.frame("yindex" = rep(yindex, each = nrow(resid_matrix)),
                           "residuals" = as.vector(resid_matrix))
+  if (is.null(ylab))
+    ylab <- paste(type, "residuals")
   ggplot(plot_data, aes_string(x="yindex", y="residuals")) + stat_binhex(color = gray(0.7), bins = 30) +
     scale_fill_gradientn(colours=c(gray(0.9),"darkblue"), name = "Frequency",
                          limits = legend_limits, breaks = legend_breaks) +
@@ -96,22 +101,22 @@ plot_residAutocov <- function(model, base_size = 11, legend.position = "bottom",
 #' Situations where each observations has a unique metric value on the x and/or y 
 #' axis are not supported. Neither are other spatial dimensions than 2D.
 #' 
-#' @param model Function-on-scalar model fitted with \code{\link[refund]{pffr}}
 #' @param data Data for which the residuals of the model should be looked at
 #' @param yvar name of the response variable in \code{model}
 #' @param xCoord_var,yCoord_var name of the variables containing location information
 #' for the x and y axis of the measurements
 #' @param ... Additional arguments passed to \code{\link[refund]{predict.pffr}}
+#' @inheritParams plot_resVSfitted
 #' @import dplyr
 #' @import refund
 #' @export
-prepareData_residsVSxy <- function(model, data, yvar, xCoord_var, yCoord_var, ...) {
+prepareData_residsVSxy <- function(model, type = "response", data, yvar, xCoord_var, yCoord_var, ...) {
   colnames(data)[colnames(data) == xCoord_var] <- "x"
   colnames(data)[colnames(data) == yCoord_var] <- "y"
   data$location <- factor(paste0(data$x,"_",data$y))
   y <- data[,yvar]
   dat <- data[,colnames(data) != yvar] # the y variable has to be excluded to call predict()
-  dat$fitted <- refund:::predict.pffr(model, newdata = dat, type = "response", ...)
+  dat$fitted <- refund:::predict.pffr(model, newdata = dat, type = type, ...)
   dat$residuals <- y - dat$fitted
   # Create a dataset with 1 row per location
   dat_res <- dat[,!(colnames(dat) %in% c("residuals","fitted"))] %>%

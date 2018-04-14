@@ -4,13 +4,15 @@
 \alias{plot_resVSyindex}
 \title{Residual plot vs functional domain for \code{\link[refund]{pffr}} models}
 \usage{
-plot_resVSyindex(model, base_size = 11, xlab = "yindex",
-  ylab = "residuals",
+plot_resVSyindex(model, type = "response", base_size = 11,
+  xlab = "yindex", ylab = NULL,
   main = "Residuals vs yindex\\nHeatmap of binned points",
   legend_limits = NULL, legend_breaks = waiver(), ...)
 }
 \arguments{
 \item{model}{Function-on-scalar model fitted with \code{\link[refund]{pffr}}}
+
+\item{type}{See \code{\link[mgcv]{residuals.gam}}}
 
 \item{base_size}{Size of plot elements. see \code{\link[ggplot2]{theme_bw}}.
 Defaults to 11.}

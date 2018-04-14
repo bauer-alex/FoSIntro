@@ -4,13 +4,15 @@
 \alias{plot_resVSfitted}
 \title{Residual plot vs fitted values for \code{\link[refund]{pffr}} models}
 \usage{
-plot_resVSfitted(model, base_size = 11, xlab = "fitted values",
-  ylab = "residuals",
+plot_resVSfitted(model, type = "response", base_size = 11,
+  xlab = "fitted values", ylab = NULL,
   main = "Residuals vs fitted values\\nHeatmap of binned points",
   legend_limits = NULL, legend_breaks = waiver(), ...)
 }
 \arguments{
 \item{model}{Function-on-scalar model fitted with \code{\link[refund]{pffr}}}
+
+\item{type}{See \code{\link[mgcv]{residuals.gam}}}
 
 \item{base_size}{Size of plot elements. see \code{\link[ggplot2]{theme_bw}}.
 Defaults to 11.}
