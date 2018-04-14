@@ -381,6 +381,9 @@ plot_predictions <- function(model, newdata, ci_type = "none", ci_alpha = 0.05, 
 #' @param type \code{"response"} (default) or \code{"link"}.
 #' See \code{\link[refund]{predict.pffr}}.
 #' @param log10 If TRUE the predictions are shown on a log10 scale
+#' @param plot_pi If \code{TRUE} prediction intervals are plotted.
+#' @param pi_alpha If \code{plot_pi} is \code{TRUE}, \code{1-pi_alpha}\% prediction
+#' intervals are plotted. Defaults to 0.05.
 #' @param base_size Base size of plot elements, see \code{\link[ggplot2]{theme_bw}}.
 #' Defaults to 11.
 #' @param xlab,ylab,main Optional arguments for plot annotation
@@ -393,18 +396,29 @@ plot_predictions <- function(model, newdata, ci_type = "none", ci_alpha = 0.05, 
 #' @import refund
 #' @import ggplot2
 #' @export
-plot_predVSobs <- function(model, data, yvar, yvar_label, type = "response", log10 = FALSE, base_size = 11,
+plot_predVSobs <- function(model, data, yvar, yvar_label, type = "response", log10 = FALSE,
+                           plot_pi = FALSE, pi_alpha = 0.05, base_size = 11,
                            xlab = "yindex", ylab, main = "Prediction vs observation",
                            ybreaks, ylabels, ylim = NULL, lwd = 1, legend_symbol_size = 2) {
   if (missing(yvar_label))
     yvar_label <- yvar
+  if (plot_pi & type != "response")
+    stop("Note: Prediction intervals can currently only be plotted for type == 'response'!")
   if (missing(ylab))
     ylab <- ifelse(type == "link", paste0("logarithmized\n",yvar_label),
                    ifelse(type == "response" & !log10, yvar_label,
                           ifelse(type == "response" & log10, paste0(yvar_label,"\non log10-scale"))))
   obs <- data[,yvar]
   data[,yvar] <- NULL
-  p <- refund:::predict.pffr(model, newdata = data, type = type)
+  if (plot_pi) {
+    p <- refund:::predict.pffr(model, newdata = data, type = type, se.fit = TRUE)
+    sigma2 <- var(as.vector(refund:::residuals.pffr(model, type = "response"))) # error variance
+    se.fit <- sqrt(p$se.fit^2 + sigma2)
+    p <- p$fit
+    pi_lower <- p - qnorm(1 - pi_alpha/2) * se.fit
+    pi_upper <- p + qnorm(1 - pi_alpha/2) * se.fit
+  } else
+    p <- refund:::predict.pffr(model, newdata = data, type = type)
   colnames(p) <- colnames(obs)
   if (type == "link")
     obs <- log(obs)
@@ -414,7 +428,16 @@ plot_predVSobs <- function(model, data, yvar, yvar_label, type = "response", log
   plot_data$type <- c("observation","prediction")
   plot_data <- tidyr::gather(plot_data, key = "yindex", value = "y", -type)
   plot_data$yindex <- as.numeric(substr(plot_data$yindex, 3,6))
-  gg <- ggplot(plot_data, aes_string(x="yindex", y="y", color="type")) + geom_line(lwd = lwd) +
+  
+  gg <- ggplot(plot_data, aes_string(x="yindex", y="y", color="type"))
+  if (plot_pi) {
+    yindex <- unique(plot_data$yindex)
+    poly_data <- data.frame("yindex" = c(yindex, rev(yindex)),
+                            "pi_border" = c(pi_lower, rev(pi_upper)))
+    gg <- gg + geom_polygon(data = poly_data, aes(x = yindex, y = pi_border), 
+                            fill = "dodgerblue3", color = "dodgerblue3", alpha = 0.5)
+  }
+  gg <- gg + geom_line(lwd = lwd) +
     xlab(xlab) + ylab(ylab) + ggtitle(main) +
     scale_color_manual(name = NULL, values = c("black","dodgerblue3")) +
     guides(colour = guide_legend(override.aes = list(size = legend_symbol_size))) +

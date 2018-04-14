@@ -5,9 +5,9 @@
 \title{Plot predictions vs real observations for \code{\link[refund]{pffr}} models}
 \usage{
 plot_predVSobs(model, data, yvar, yvar_label, type = "response",
-  log10 = FALSE, base_size = 11, xlab = "yindex", ylab,
-  main = "Prediction vs observation", ybreaks, ylabels, ylim = NULL,
-  lwd = 1, legend_symbol_size = 2)
+  log10 = FALSE, plot_pi = FALSE, pi_alpha = 0.05, base_size = 11,
+  xlab = "yindex", ylab, main = "Prediction vs observation", ybreaks,
+  ylabels, ylim = NULL, lwd = 1, legend_symbol_size = 2)
 }
 \arguments{
 \item{model}{Function-on-scalar model fitted with \code{\link[refund]{pffr}}}
@@ -22,6 +22,11 @@ plot_predVSobs(model, data, yvar, yvar_label, type = "response",
 See \code{\link[refund]{predict.pffr}}.}
 
 \item{log10}{If TRUE the predictions are shown on a log10 scale}
+
+\item{plot_pi}{If \code{TRUE} prediction intervals are plotted.}
+
+\item{pi_alpha}{If \code{plot_pi} is \code{TRUE}, \code{1-pi_alpha}\% prediction
+intervals are plotted. Defaults to 0.05.}
 
 \item{base_size}{Base size of plot elements, see \code{\link[ggplot2]{theme_bw}}.
 Defaults to 11.}
