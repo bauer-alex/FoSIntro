@@ -417,6 +417,15 @@ plot_predVSobs <- function(model, data, yvar, yvar_label, type = "response", log
     p <- p$fit
     pi_lower <- p - qnorm(1 - pi_alpha/2) * se.fit
     pi_upper <- p + qnorm(1 - pi_alpha/2) * se.fit
+    if (log10) {
+      if (any(pi_lower <= 0)) {
+        warning("Prediction intervals are suppressed as they include negative values on the non-log scale!")
+        plot_pi <- FALSE
+      } else {
+        pi_lower <- log10(pi_lower)
+        pi_upper <- log10(pi_upper)
+      }
+    }
   } else
     p <- refund:::predict.pffr(model, newdata = data, type = type)
   colnames(p) <- colnames(obs)
