@@ -4,13 +4,11 @@
 \alias{prepareData_residsVSxy}
 \title{Data preparation for \code{\link{plot_residsVSxy}}}
 \usage{
-prepareData_residsVSxy(model, type = "response", data, yvar, xCoord_var,
-  yCoord_var, ...)
+prepareData_residsVSxy(model, data, yvar, xCoord_var, yCoord_var,
+  type = "response", ...)
 }
 \arguments{
 \item{model}{Function-on-scalar model fitted with \code{\link[refund]{pffr}}}
-
-\item{type}{See \code{\link[mgcv]{residuals.gam}}}
 
 \item{data}{Data for which the residuals of the model should be looked at}
 
@@ -18,6 +16,8 @@ prepareData_residsVSxy(model, type = "response", data, yvar, xCoord_var,
 
 \item{xCoord_var, yCoord_var}{name of the variables containing location information
 for the x and y axis of the measurements}
+
+\item{type}{See \code{\link[mgcv]{residuals.gam}}}
 
 \item{...}{Additional arguments passed to \code{\link[refund]{predict.pffr}}}
 }

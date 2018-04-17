@@ -110,7 +110,7 @@ plot_residAutocov <- function(model, base_size = 11, legend.position = "bottom",
 #' @import dplyr
 #' @import refund
 #' @export
-prepareData_residsVSxy <- function(model, type = "response", data, yvar, xCoord_var, yCoord_var, ...) {
+prepareData_residsVSxy <- function(model, data, yvar, xCoord_var, yCoord_var, type = "response", ...) {
   colnames(data)[colnames(data) == xCoord_var] <- "x"
   colnames(data)[colnames(data) == yCoord_var] <- "y"
   data$location <- factor(paste0(data$x,"_",data$y))
