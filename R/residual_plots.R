@@ -164,8 +164,8 @@ plot_residsVSxy <- function(model, dat_xy, breaks, labels_cut = NULL, base_size 
                             mark_location_size = 5, ...) {
   if (missing(breaks))
     stop("Please specify 'breaks' for the residual legend!")
-  if (any(abs(dat_xy$resids_mean) > 1))
-    stop("At least one mean of a seismogram has an absolute value bigger than one -> Please edit the breaks accordingly!")
+  if (any(dat_xy$resids_mean < min(breaks) | dat_xy$resids_mean > max(breaks)))
+    stop("At least one mean of a seismogram is outside of range(breaks) -> Please edit the breaks accordingly!")
   # Plot
   resids_kat <- cut(dat_xy$resids_mean, breaks = breaks, labels = labels_cut)
   colors <- rev(RColorBrewer::brewer.pal(length(levels(resids_kat)), "RdBu"))
