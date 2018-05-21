@@ -111,9 +111,7 @@ plot_residAutocov <- function(model, base_size = 11, legend.position = "bottom",
 #' @import refund
 #' @export
 prepareData_residsVSxy <- function(model, data, yvar, xCoord_var, yCoord_var, type = "response", ...) {
-  colnames(data)[colnames(data) == xCoord_var] <- "x"
-  colnames(data)[colnames(data) == yCoord_var] <- "y"
-  data$location <- factor(paste0(data$x,"_",data$y))
+  data$location <- factor(paste0(data[,xCoord_var],"_",data[,yCoord_var]))
   y <- data[,yvar]
   dat <- data[,colnames(data) != yvar] # the y variable has to be excluded to call predict()
   dat$fitted <- refund:::predict.pffr(model, newdata = dat, type = type, ...)
@@ -127,6 +125,9 @@ prepareData_residsVSxy <- function(model, data, yvar, xCoord_var, yCoord_var, ty
   # Sort residuals close to zero to top so that they get plotted in the background
   ord <- order(abs(dat_res$resids_mean))
   dat_res <- dat_res[ord,]
+  # Rename the spatial coordinate variables for further data handling in the plot function
+  colnames(dat_res)[colnames(dat_res) == xCoord_var] <- "x"
+  colnames(dat_res)[colnames(dat_res) == yCoord_var] <- "y"
   
   dat_res
 }
