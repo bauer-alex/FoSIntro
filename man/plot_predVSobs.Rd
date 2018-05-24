@@ -5,9 +5,9 @@
 \title{Plot predictions vs real observations for \code{\link[refund]{pffr}} models}
 \usage{
 plot_predVSobs(model, data, yvar, yvar_label, type = "response",
-  log10 = FALSE, plot_pi = FALSE, pi_alpha = 0.05, base_size = 11,
+  log10 = FALSE, pi_type = "none", pi_alpha = 0.05, base_size = 11,
   xlab = "yindex", ylab, main = "Prediction vs observation", ybreaks,
-  ylabels, ylim = NULL, lwd = 1, legend_symbol_size = 2)
+  ylabels, ylim = NULL, lwd = 1, legend_symbol_size = 2, ...)
 }
 \arguments{
 \item{model}{Function-on-scalar model fitted with \code{\link[refund]{pffr}}}
@@ -23,9 +23,16 @@ See \code{\link[refund]{predict.pffr}}.}
 
 \item{log10}{If TRUE the predictions are shown on a log10 scale}
 
-\item{plot_pi}{If \code{TRUE} prediction intervals are plotted.}
+\item{pi_type}{One of \code{"none"} (default; no uncertainty bands), \code{"pi_norm"}
+or \code{"pi_gamma"} (pointwise prediction intervals), specifying which type of uncertainty bands should be plotted.
+Prediction intervals are either calculated summing the predicted mean variance and
+the residual variance (\code{"pi_norm"}) or using 'posterior simulation' of the parameter vector
+(\code{"pi_gamma"}) as outlined here: https://stat.ethz.ch/pipermail/r-help/2011-April/275632.html.
+Note that the \code{"pi_norm"} PIs are not generally applicable for generalized models.
+The posterior simulation approach is more generally applicable, but is currently only implemented
+for Gamma regression.}
 
-\item{pi_alpha}{If \code{plot_pi} is \code{TRUE}, \code{1-pi_alpha}\% prediction
+\item{pi_alpha}{If \code{pi_type != "none"}, \code{1-pi_alpha}\% prediction
 intervals are plotted. Defaults to 0.05.}
 
 \item{base_size}{Base size of plot elements, see \code{\link[ggplot2]{theme_bw}}.
@@ -41,6 +48,8 @@ corresponding labels (character vector) for the y axis}
 \item{lwd}{Optional line width. Defaults to 2}
 
 \item{legend_symbol_size}{Optional size of symbols in legend.}
+
+\item{seed}{Additional arguments passed to \code{\link{pi_gamma}}}
 }
 \description{
 Plots the predictions o a function-on-scalar model fitted with

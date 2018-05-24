@@ -3,6 +3,7 @@
 export(bootstrap_pffr)
 export(calc_bootstrapCIs)
 export(calc_singleBootstrapCI)
+export(pi_gamma)
 export(plot_1D)
 export(plot_2D)
 export(plot_2Dheatmap)

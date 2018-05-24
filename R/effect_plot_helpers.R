@@ -1,4 +1,48 @@
 
+#' Estimate posterior simulation prediction intervals for Gamma regression
+#' 
+#' Prediction intervals for a function-on-scalar Gamma regression model
+#' are estimated using the 'posterior simulation' approach for the parameter vector,
+#' e.g. outlined here: https://stat.ethz.ch/pipermail/r-help/2011-April/275632.html.
+#' This approach is more generally applicable to generalized regression models,
+#' however the implementation is currently only focused on Gamma regression.
+#' 
+#' @param model Function-on-scalar regression model fitted with \code{\link[refund]{pffr}}
+#' @param newdata The new data.frame for which the predictions are calculated
+#' @param alpha Alpha level, defaults to 0.05, i.e. 95\% prediction intervals
+#' @param n.rep number of replications for the posterior simulation
+#' @param seed Optional seed for reproducibility
+#' @return \code{data.frame} with two columns \code{pi_lower} and \code{pi_upper}
+#' @export
+pi_gamma <- function(model, newdata, alpha, n.rep = 10000, seed = NULL) {
+  if (!is.null(seed))
+    set.seed(seed)
+
+    ## extract parameter estiamtes and cov matrix
+  beta <- model$coefficients
+  Vb <- vcov(model)
+  
+  ## simulate replicate beta vectors from posterior
+  Cv <- chol(Vb)
+  nb <- length(beta)
+  br <- t(Cv) %*% matrix(rnorm(n.rep*nb),nb,n.rep) + beta
+  
+  ## turn these into replicate linear predictors
+  Xp <- refund:::predict.pffr(model, newdata = newdata, type="lpmatrix")
+  lp <- Xp%*%br
+  fv <- exp(lp) ## ... finally, replicate expected value vectors
+  
+  ## now simulate from Gamma deviates with mean as in fv and estimated scale
+  scale <- model$scale
+  yr <- matrix(rgamma(fv*0,shape=1/scale, scale=fv*scale), nrow(fv), ncol(fv))
+  
+  ## compute the prediction interval
+  PI <- apply(yr,1,quantile,prob=c(alpha/2, 1-(alpha/2)))
+  data.frame("pi_lower" = PI[1,],
+             "pi_upper" = PI[2,])
+}
+
+
 #' Create a grid of multiple ggplots sharing the same legend
 #'
 #' Function to create a grid of multiple \code{\link[ggplot2]{ggplot}}s sharing

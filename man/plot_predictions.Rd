@@ -4,22 +4,30 @@
 \alias{plot_predictions}
 \title{Plot model predictions for \code{\link[refund]{pffr}} models}
 \usage{
-plot_predictions(model, newdata, ci_type = "none", ci_alpha = 0.05,
+plot_predictions(model, newdata, yvar, ci_type = "none", ci_alpha = 0.05,
   labels = NULL, legend_title = "group", col_palette = "Set1",
   col_vector = NULL, rev_cols = FALSE, base_size = 11,
   legend_symbol_size = 2, type = "response", log10 = FALSE,
   plot.margin = unit(rep(5.5, 4), "points"), hline, ybreaks = waiver(),
   ylabels = waiver(), xlab = "yindex", ylab = "prediction", main,
-  ylim = NULL, lwd = 1)
+  ylim = NULL, lwd = 1, ...)
 }
 \arguments{
 \item{model}{Function-on-scalar model fitted with \code{\link[refund]{pffr}}}
 
 \item{newdata}{See \code{\link[refund]{predict.pffr}}}
 
+\item{yvar}{name of the response variable in \code{model}}
+
 \item{ci_type}{One of \code{"none"} (default; no confidence bands), \code{"ci"}
-(pointwise confidence intervals for the predicted mean) or \code{"pi"} (pointwise
-prediction intervals), specifying which type of confidence bands should be plotted}
+(pointwise confidence intervals for the predicted mean) or \code{"pi_norm"}/\code{"pi_gamma"}
+(pointwise prediction intervals), specifying which type of uncertainty bands should be plotted.
+Prediction intervals are either calculated summing the predicted mean variance and
+the residual variance (\code{"pi_norm"}) or using 'posterior simulation' of the parameter vector
+(\code{"pi_gamma"}) as outlined here: https://stat.ethz.ch/pipermail/r-help/2011-April/275632.html.
+Note that the \code{"pi_norm"} PIs are not generally applicable for generalized models.
+The posterior simulation approach is more generally applicable, but is currently only implemented
+for Gamma regression.}
 
 \item{ci_alpha}{Alpha to be used for confidence or prediction intervals.
 Defaults to 0.05, i.e. 95\% intervals.}
@@ -56,6 +64,8 @@ Defaults to 11.}
 \code{ybreaks} is specified}
 
 \item{xlab, ylab, main, ylim, lwd}{Further arguments for the plot function}
+
+\item{...}{Additional arguments passed to \code{\link{pi_gamma}}}
 }
 \description{
 Plots the model predictions for a function-on-scalar model fitted with

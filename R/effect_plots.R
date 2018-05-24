@@ -243,9 +243,16 @@ plot_2Dheatmap <- function(model, plot_type = 1, plot_ci = TRUE, plot_ci_type = 
 #'
 #' @param model Function-on-scalar model fitted with \code{\link[refund]{pffr}}
 #' @param newdata See \code{\link[refund]{predict.pffr}}
+#' @param yvar name of the response variable in \code{model}
 #' @param ci_type One of \code{"none"} (default; no confidence bands), \code{"ci"}
-#' (pointwise confidence intervals for the predicted mean) or \code{"pi"} (pointwise
-#' prediction intervals), specifying which type of confidence bands should be plotted
+#' (pointwise confidence intervals for the predicted mean) or \code{"pi_norm"}/\code{"pi_gamma"}
+#' (pointwise prediction intervals), specifying which type of uncertainty bands should be plotted.
+#' Prediction intervals are either calculated summing the predicted mean variance and
+#' the residual variance (\code{"pi_norm"}) or using 'posterior simulation' of the parameter vector
+#' (\code{"pi_gamma"}) as outlined here: https://stat.ethz.ch/pipermail/r-help/2011-April/275632.html.
+#' Note that the \code{"pi_norm"} PIs are not generally applicable for generalized models.
+#' The posterior simulation approach is more generally applicable, but is currently only implemented
+#' for Gamma regression.
 #' @param ci_alpha Alpha to be used for confidence or prediction intervals.
 #' Defaults to 0.05, i.e. 95\% intervals.
 #' @param labels Labels vector with length equal to \code{nrow(newdata)}.
@@ -267,6 +274,7 @@ plot_2Dheatmap <- function(model, plot_type = 1, plot_ci = TRUE, plot_ci_type = 
 #' @param ylabels Character vector of labels for the y axis. Only used if
 #' \code{ybreaks} is specified
 #' @param xlab,ylab,main,ylim,lwd Further arguments for the plot function
+#' @param ... Additional arguments passed to \code{\link{pi_gamma}}
 #' @importFrom stats var
 #' @importFrom tidyr gather_
 #' @import dplyr
@@ -274,14 +282,17 @@ plot_2Dheatmap <- function(model, plot_type = 1, plot_ci = TRUE, plot_ci_type = 
 #' @import ggplot2
 #' @import refund
 #' @export
-plot_predictions <- function(model, newdata, ci_type = "none", ci_alpha = 0.05, labels = NULL, legend_title = "group",
+plot_predictions <- function(model, newdata, yvar, ci_type = "none", ci_alpha = 0.05, labels = NULL, legend_title = "group",
                              col_palette = "Set1", col_vector = NULL, rev_cols = FALSE,
                              base_size = 11, legend_symbol_size = 2, type = "response", log10 = FALSE,
                              plot.margin = unit(rep(5.5,4),"points"), hline, ybreaks = waiver(), ylabels = waiver(),
-                             xlab = "yindex", ylab = "prediction", main, ylim = NULL, lwd = 1) {
-  if (ci_type == "none")
+                             xlab = "yindex", ylab = "prediction", main, ylim = NULL, lwd = 1, ...) {
+  if (missing(yvar))
+    stop("Please specify the response variable yvar")
+  newdata[,yvar] <- NULL # predict.pffr only works if no yvar is in the data.frame
+  if (ci_type %in% c("none","pi_gamma"))
     fit <- as.data.frame(refund:::predict.pffr(model, newdata, type = type))
-  else if (ci_type %in% c("ci","pi")) {
+  else if (ci_type %in% c("ci","pi_norm")) {
     fit <- refund:::predict.pffr(model, newdata, type = type, se.fit = TRUE)
     se_fit <- as.data.frame(fit$se.fit)
     colnames(se_fit) <- model$pffr$yind
@@ -295,7 +306,7 @@ plot_predictions <- function(model, newdata, ci_type = "none", ci_alpha = 0.05, 
     fit$label <- paste("group", 1:nrow(fit))
   plot_data <- fit %>%
     tidyr::gather_(key = "yindex", value = "prediction", gather_cols = colnames(fit)[!(colnames(fit) %in% c("yindex","prediction","label"))])
-  if (ci_type %in% c("ci","pi")) {
+  if (ci_type %in% c("ci","pi_norm")) {
     se_fit_data <- se_fit %>%
       gather(key = "yindex", value = "se")
     plot_data$se <- se_fit_data$se
@@ -314,13 +325,19 @@ plot_predictions <- function(model, newdata, ci_type = "none", ci_alpha = 0.05, 
     ylim <- range(ybreaks) # if ybreaks are specified, but ylim not
   
   # create dataset with confidence/prediction intervals
-  if (ci_type %in% c("ci","pi")) {
-    if (ci_type == "pi") {
+  if (ci_type != "none") {
+    if (ci_type == "pi_norm") {
       sigma2 <- var(as.vector(refund:::residuals.pffr(model, type = "response"))) # error variance
       plot_data %<>% mutate(se = sqrt(plot_data$se^2 + sigma2))
     }
-    plot_data %<>% mutate(interval_lower = plot_data$prediction - qnorm(1-(ci_alpha/2))*plot_data$se,
-                          interval_upper = plot_data$prediction + qnorm(1-(ci_alpha/2))*plot_data$se)
+    if (ci_type %in% c("ci","pi_norm")) {
+      plot_data %<>% mutate(interval_lower = plot_data$prediction - qnorm(1-(ci_alpha/2))*plot_data$se,
+                            interval_upper = plot_data$prediction + qnorm(1-(ci_alpha/2))*plot_data$se)
+    }
+    if (ci_type == "pi_gamma") {
+      pi_dat <- pi_gamma(model, newdata, ci_alpha, ...)
+      plot_data %<>% mutate(interval_lower = pi_dat$pi_lower, interval_upper = pi_dat$pi_upper)
+    }
     # if y is plotted on the log10 scale and the intervals are <0, then set those values to 0.00001
     if (log10 & any(plot_data$interval_lower < 0)) {
       warning("Confidence/Prediction interval lower boundaries < 0 are set to 0.00001 in order to plot on log10 scale!")
@@ -332,7 +349,7 @@ plot_predictions <- function(model, newdata, ci_type = "none", ci_alpha = 0.05, 
   }
   
   gg <- ggplot(plot_data, aes_string(x="yindex", y="prediction", color="label"))
-  if (ci_type %in% c("ci","pi")) {
+  if (ci_type != "none") {
     gg <- gg + geom_polygon(data = polydat, aes_string(x = "yindex", y = "interval_border", fill = "label", col = NULL), show.legend = FALSE, alpha = 0.3)
     if (nrow(newdata) == 1)
       gg <- gg + scale_fill_manual(values = "black")
@@ -381,8 +398,15 @@ plot_predictions <- function(model, newdata, ci_type = "none", ci_alpha = 0.05, 
 #' @param type \code{"response"} (default) or \code{"link"}.
 #' See \code{\link[refund]{predict.pffr}}.
 #' @param log10 If TRUE the predictions are shown on a log10 scale
-#' @param plot_pi If \code{TRUE} prediction intervals are plotted.
-#' @param pi_alpha If \code{plot_pi} is \code{TRUE}, \code{1-pi_alpha}\% prediction
+#' @param pi_type One of \code{"none"} (default; no uncertainty bands), \code{"pi_norm"}
+#' or \code{"pi_gamma"} (pointwise prediction intervals), specifying which type of uncertainty bands should be plotted.
+#' Prediction intervals are either calculated summing the predicted mean variance and
+#' the residual variance (\code{"pi_norm"}) or using 'posterior simulation' of the parameter vector
+#' (\code{"pi_gamma"}) as outlined here: https://stat.ethz.ch/pipermail/r-help/2011-April/275632.html.
+#' Note that the \code{"pi_norm"} PIs are not generally applicable for generalized models.
+#' The posterior simulation approach is more generally applicable, but is currently only implemented
+#' for Gamma regression.
+#' @param pi_alpha If \code{pi_type != "none"}, \code{1-pi_alpha}\% prediction
 #' intervals are plotted. Defaults to 0.05.
 #' @param base_size Base size of plot elements, see \code{\link[ggplot2]{theme_bw}}.
 #' Defaults to 11.
@@ -392,17 +416,20 @@ plot_predictions <- function(model, newdata, ci_type = "none", ci_alpha = 0.05, 
 #' @param ylim Optional y axis limits of plot
 #' @param lwd Optional line width. Defaults to 2
 #' @param legend_symbol_size Optional size of symbols in legend.
+#' @param seed Additional arguments passed to \code{\link{pi_gamma}}
 #' @importFrom tidyr gather
 #' @import refund
 #' @import ggplot2
 #' @export
 plot_predVSobs <- function(model, data, yvar, yvar_label, type = "response", log10 = FALSE,
-                           plot_pi = FALSE, pi_alpha = 0.05, base_size = 11,
+                           pi_type = "none", pi_alpha = 0.05, base_size = 11,
                            xlab = "yindex", ylab, main = "Prediction vs observation",
-                           ybreaks, ylabels, ylim = NULL, lwd = 1, legend_symbol_size = 2) {
+                           ybreaks, ylabels, ylim = NULL, lwd = 1, legend_symbol_size = 2, ...) {
+  if (missing(yvar))
+    stop("Please specify the response variable yvar")
   if (missing(yvar_label))
     yvar_label <- yvar
-  if (plot_pi & type != "response")
+  if (pi_type != "none" & type != "response")
     stop("Note: Prediction intervals can currently only be plotted for type == 'response'!")
   if (missing(ylab))
     ylab <- ifelse(type == "link", paste0("logarithmized\n",yvar_label),
@@ -410,17 +437,24 @@ plot_predVSobs <- function(model, data, yvar, yvar_label, type = "response", log
                           ifelse(type == "response" & log10, paste0(yvar_label,"\non log10-scale"))))
   obs <- data[,yvar]
   data[,yvar] <- NULL
-  if (plot_pi) {
+  if (pi_type != "none") {
     p <- refund:::predict.pffr(model, newdata = data, type = type, se.fit = TRUE)
-    sigma2 <- var(as.vector(refund:::residuals.pffr(model, type = "response"))) # error variance
-    se.fit <- sqrt(p$se.fit^2 + sigma2)
-    p <- p$fit
-    pi_lower <- p - qnorm(1 - pi_alpha/2) * se.fit
-    pi_upper <- p + qnorm(1 - pi_alpha/2) * se.fit
+    if (pi_type == "pi_norm") {
+      sigma2 <- var(as.vector(refund:::residuals.pffr(model, type = "response"))) # error variance
+      se.fit <- sqrt(p$se.fit^2 + sigma2)
+      p <- p$fit
+      pi_lower <- p - qnorm(1 - pi_alpha/2) * se.fit
+      pi_upper <- p + qnorm(1 - pi_alpha/2) * se.fit
+    } else if (pi_type == "pi_gamma") {
+      pi_dat <- pi_gamma(model, data, pi_alpha, ...)
+      pi_lower <- pi_dat$pi_lower
+      pi_upper <- pi_dat$pi_upper
+      p <- p$fit
+    }
     if (log10) {
       if (any(pi_lower <= 0)) {
         warning("Prediction intervals are suppressed as they include negative values on the non-log scale!")
-        plot_pi <- FALSE
+        pi_type <- "none"
       } else {
         pi_lower <- log10(pi_lower)
         pi_upper <- log10(pi_upper)
@@ -439,7 +473,7 @@ plot_predVSobs <- function(model, data, yvar, yvar_label, type = "response", log
   plot_data$yindex <- as.numeric(substr(plot_data$yindex, 3,6))
   
   gg <- ggplot(plot_data, aes_string(x="yindex", y="y", color="type"))
-  if (plot_pi) {
+  if (pi_type != "none") {
     yindex <- unique(plot_data$yindex)
     poly_data <- data.frame("yindex" = c(yindex, rev(yindex)),
                             "pi_border" = c(pi_lower, rev(pi_upper)))
