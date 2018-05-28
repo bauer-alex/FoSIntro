@@ -191,8 +191,12 @@ plot_2Dheatmap <- function(model, plot_type = 1, plot_ci = TRUE, plot_ci_type = 
   xlab <- ifelse(missing(xlab), plotObject$xlab, xlab)
   ylab <- ifelse(missing(ylab), plotObject$ylab, ylab)
   
-  if (missing(legend_limits))
-    legend_limits <- c(min(plot_data$ci_lower), max(plot_data$ci_upper))
+  if (missing(legend_limits)) {
+    if (!plot_ci) {
+      legend_limits <- range(plot_data$fit, na.rm = T)
+    } else
+      legend_limits <- c(min(plot_data$ci_lower, na.rm = T), max(plot_data$ci_upper, na.rm = T))
+  }
   gg_fit <- ggplot(plot_data, aes_string(x="Var1", y="Var2", fill = "fit")) + geom_tile() +
     xlab(xlab) + ylab("") + ggtitle("Point estimate") +
     scale_x_continuous(expand = c(0,0)) + scale_y_continuous(expand = c(0,0)) +
