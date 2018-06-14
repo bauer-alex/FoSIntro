@@ -81,7 +81,7 @@ plot_residAutocov <- function(model, base_size = 11, legend.position = "bottom",
   dat <-  tidyr::gather(dat, key = "time2", value = "covariance", 2:ncol(dat))
   dat$time2 <- as.numeric(dat$time2)
   ggplot(dat, aes_string(x="time", y="time2")) +
-    geom_tile(aes_string(fill = "covariance")) +
+    geom_tile(aes_string(fill = "Covariance")) +
     xlab("time [s]") + ylab("time [s]") +
     scale_fill_gradient(low = "grey90", high = "darkblue", ...) +
     theme_bw(base_size = base_size) +
