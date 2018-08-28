@@ -14,13 +14,13 @@ plot_resVSfitted(model, type = "response", base_size = 11,
 
 \item{type}{See \code{\link[mgcv]{residuals.gam}}}
 
-\item{base_size}{Size of plot elements. see \code{\link[ggplot2]{theme_bw}}.
+\item{base_size}{Size of plot elements. see \code{\link[ggplot2:ggtheme]{theme_bw}}.
 Defaults to 11.}
 
 \item{xlab, ylab, main}{Optional plot annotation}
 
 \item{legend_limits, legend_breaks}{Optional arguments, passed as \code{limits}
-and \code{breaks} to \code{\link[ggplot2]{scale_fill_gradientn}}.}
+and \code{breaks} to \code{\link[ggplot2:scale_colour_gradient]{ggplot2:scale_fill_gradientn()}}.}
 
 \item{...}{Further arguments passed to \code{\link[ggplot2]{theme}}}
 }

@@ -6,11 +6,11 @@
 #'
 #' @param model Function-on-scalar model fitted with \code{\link[refund]{pffr}}
 #' @param type See \code{\link[mgcv]{residuals.gam}}
-#' @param base_size Size of plot elements. see \code{\link[ggplot2]{theme_bw}}.
+#' @param base_size Size of plot elements. see \code{\link[ggplot2:ggtheme]{theme_bw}}.
 #' Defaults to 11.
 #' @param xlab,ylab,main Optional plot annotation
 #' @param legend_limits,legend_breaks Optional arguments, passed as \code{limits}
-#' and \code{breaks} to \code{\link[ggplot2]{scale_fill_gradientn}}.
+#' and \code{breaks} to \code{\link[ggplot2:scale_colour_gradient]{ggplot2:scale_fill_gradientn()}}.
 #' @param ... Further arguments passed to \code{\link[ggplot2]{theme}}
 #' @import ggplot2
 #' @import refund
@@ -63,11 +63,11 @@ plot_resVSyindex <- function(model, type = "response", base_size = 11, xlab = "y
 #' a function-on-scalar model fitted with \code{\link[refund]{pffr}}.
 #' 
 #' @param model Function-on-scalar model fitted with \code{\link[refund]{pffr}}
-#' @param base_size Size of plot elements. see \code{\link[ggplot2]{theme_bw}}.
+#' @param base_size Size of plot elements. see \code{\link[ggplot2:ggtheme]{theme_bw}}.
 #' Defaults to 11.
 #' @param legend.position,legend.key.width Arguments for \code{\link[ggplot2]{theme}}
-#' @param cov.use see \code{use} argument in \code{\link[stats]{cov}}
-#' @param ... Additional arguments passed to \code{\link[ggplot2]{scale_fill_gradient}}
+#' @param cov.use see \code{use} argument in \code{\link[stats:cor]{cov}}
+#' @param ... Additional arguments passed to \code{\link[ggplot2:scale_colour_gradient]{scale_fill_gradient}}
 #' @importFrom stats cov
 #' @importFrom tidyr gather
 #' @import ggplot2
@@ -149,7 +149,7 @@ prepareData_residsVSxy <- function(model, data, yvar, xCoord_var, yCoord_var, ty
 #' @param breaks breaks to be used for the colors of the residual categories.
 #' E.g. \code{c(-10,0,10)} to show the residuals categorized in \code{c("(-10,0]","(0,10]")}
 #' @param labels_cut Optional labels for the categories defined using \code{breaks}.
-#' @param base_size see \code{\link[ggplot2]{theme_bw}}
+#' @param base_size see \code{\link[ggplot2:ggtheme]{theme_bw}}
 #' @param legend_rows,legend_cols Optional parameters specifying the grid of
 #' legend elements in \code{\link[ggplot2]{guide_legend}}
 #' @param mark_location Optional row number \code{dat_xy} for which the location

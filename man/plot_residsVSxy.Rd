@@ -4,9 +4,9 @@
 \alias{plot_residsVSxy}
 \title{Residual plot vs space for \code{\link[refund]{pffr}} models}
 \usage{
-plot_residsVSxy(model, dat_xy, breaks, labels_cut = NULL, base_size = 11,
-  legend_rows = NULL, legend_cols = NULL, mark_location = NULL,
-  mark_location_size = 5, ...)
+plot_residsVSxy(model, dat_xy, breaks, labels_cut = NULL,
+  base_size = 11, legend_rows = NULL, legend_cols = NULL,
+  mark_location = NULL, mark_location_size = 5, ...)
 }
 \arguments{
 \item{model}{Function-on-scalar model fitted with \code{\link[refund]{pffr}}}
@@ -19,7 +19,7 @@ E.g. \code{c(-10,0,10)} to show the residuals categorized in \code{c("(-10,0]","
 
 \item{labels_cut}{Optional labels for the categories defined using \code{breaks}.}
 
-\item{base_size}{see \code{\link[ggplot2]{theme_bw}}}
+\item{base_size}{see \code{\link[ggplot2:ggtheme]{theme_bw}}}
 
 \item{legend_rows, legend_cols}{Optional parameters specifying the grid of
 legend elements in \code{\link[ggplot2]{guide_legend}}}

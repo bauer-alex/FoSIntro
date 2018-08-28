@@ -10,14 +10,14 @@ plot_residAutocov(model, base_size = 11, legend.position = "bottom",
 \arguments{
 \item{model}{Function-on-scalar model fitted with \code{\link[refund]{pffr}}}
 
-\item{base_size}{Size of plot elements. see \code{\link[ggplot2]{theme_bw}}.
+\item{base_size}{Size of plot elements. see \code{\link[ggplot2:ggtheme]{theme_bw}}.
 Defaults to 11.}
 
 \item{legend.position, legend.key.width}{Arguments for \code{\link[ggplot2]{theme}}}
 
-\item{cov.use}{see \code{use} argument in \code{\link[stats]{cov}}}
+\item{cov.use}{see \code{use} argument in \code{\link[stats:cor]{cov}}}
 
-\item{...}{Additional arguments passed to \code{\link[ggplot2]{scale_fill_gradient}}}
+\item{...}{Additional arguments passed to \code{\link[ggplot2:scale_colour_gradient]{scale_fill_gradient}}}
 }
 \description{
 Plot the autocovariance of the residuals over the functional domain (e.g. time) for 

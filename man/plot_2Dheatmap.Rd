@@ -4,10 +4,12 @@
 \alias{plot_2Dheatmap}
 \title{Heatmat plot for 2D smooth effects for \code{\link[refund]{pffr}} models}
 \usage{
-plot_2Dheatmap(model, plot_type = 1, plot_ci = TRUE, plot_ci_type = "all",
-  alpha = 0.05, CIs_list, select, lowCol = "blue", highCol = "red",
-  legend_limits, legend_position = "right", xlab, ylab, main, sub = NULL,
-  effect_label, base_size = 11, outer_fontsize = 15, newpage = TRUE, ...)
+plot_2Dheatmap(model, plot_type = 1, plot_ci = TRUE,
+  plot_ci_type = "all", alpha = 0.05, CIs_list, select,
+  lowCol = "blue", highCol = "red", legend_limits,
+  legend_position = "right", xlab, ylab, main, sub = NULL,
+  effect_label, base_size = 11, outer_fontsize = 15, newpage = TRUE,
+  ...)
 }
 \arguments{
 \item{model}{Function-on-scalar model fitted with \code{\link[refund]{pffr}}}
@@ -57,7 +59,7 @@ plot parameters}
 \item{effect_label}{Used in the main title of the plot as
 '\code{effect_label} with global 95\% CI'. Only used if \code{main} is not specified.}
 
-\item{base_size}{Size of plot elements. see \code{\link[ggplot2]{theme_bw}}.
+\item{base_size}{Size of plot elements. see \code{\link[ggplot2:ggtheme]{theme_bw}}.
 Defaults to 11.}
 
 \item{outer_fontsize}{Fontsize of the main and sub which are outer of the

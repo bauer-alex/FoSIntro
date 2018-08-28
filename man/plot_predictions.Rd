@@ -4,13 +4,13 @@
 \alias{plot_predictions}
 \title{Plot model predictions for \code{\link[refund]{pffr}} models}
 \usage{
-plot_predictions(model, newdata, yvar, ci_type = "none", ci_alpha = 0.05,
-  labels = NULL, legend_title = "group", col_palette = "Set1",
-  col_vector = NULL, rev_cols = FALSE, base_size = 11,
-  legend_symbol_size = 2, type = "response", log10 = FALSE,
-  plot.margin = unit(rep(5.5, 4), "points"), hline, ybreaks = waiver(),
-  ylabels = waiver(), xlab = "yindex", ylab = "prediction", main,
-  ylim = NULL, lwd = 1, ...)
+plot_predictions(model, newdata, yvar, ci_type = "none",
+  ci_alpha = 0.05, labels = NULL, legend_title = "group",
+  col_palette = "Set1", col_vector = NULL, rev_cols = FALSE,
+  base_size = 11, legend_symbol_size = 2, type = "response",
+  log10 = FALSE, plot.margin = unit(rep(5.5, 4), "points"), hline,
+  ybreaks = waiver(), ylabels = waiver(), xlab = "yindex",
+  ylab = "prediction", main, ylim = NULL, lwd = 1, ...)
 }
 \arguments{
 \item{model}{Function-on-scalar model fitted with \code{\link[refund]{pffr}}}
@@ -38,14 +38,14 @@ Used for the legend.}
 \item{legend_title}{Title of legend}
 
 \item{col_palette}{Color palette to use in plot, see
-\code{\link[ggplot2]{scale_color_brewer}}. Only used if \code{nrow(newdata)>1}
+\code{\link[ggplot2:scale_colour_brewer]{scale_color_brewer}}. Only used if \code{nrow(newdata)>1}
 and if \code{is.null(col_vector)}.}
 
 \item{col_vector}{Vector of colors to use}
 
 \item{rev_cols}{If TRUE, the color palette is turned around.}
 
-\item{base_size}{Base size of plot elements, see \code{\link[ggplot2]{theme_bw}}.
+\item{base_size}{Base size of plot elements, see \code{\link[ggplot2:ggtheme]{theme_bw}}.
 Defaults to 11.}
 
 \item{legend_symbol_size}{Size of symbols in legend. Default to 2}
@@ -56,7 +56,7 @@ Defaults to 11.}
 
 \item{plot.margin}{Margin of the ggplot}
 
-\item{hline}{Vector of \code{\link[ggplot2]{geom_hline}}}
+\item{hline}{Vector of \code{\link[ggplot2:geom_abline]{geom_hline}}}
 
 \item{ybreaks}{Numeric vector of breaks for the y axis}
 

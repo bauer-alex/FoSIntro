@@ -35,7 +35,7 @@ for Gamma regression.}
 \item{pi_alpha}{If \code{pi_type != "none"}, \code{1-pi_alpha}\% prediction
 intervals are plotted. Defaults to 0.05.}
 
-\item{base_size}{Base size of plot elements, see \code{\link[ggplot2]{theme_bw}}.
+\item{base_size}{Base size of plot elements, see \code{\link[ggplot2:ggtheme]{theme_bw}}.
 Defaults to 11.}
 
 \item{xlab, ylab, main}{Optional arguments for plot annotation}

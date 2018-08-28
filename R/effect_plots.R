@@ -24,7 +24,7 @@
 #' plot parameters
 #' @param effect_label Used in the main title of the plot as
 #' '\code{effect_label} with global 95\% CI'. Only used if \code{main} is not specified.
-#' @param base_size Size of plot elements. see \code{\link[ggplot2]{theme_bw}}.
+#' @param base_size Size of plot elements. see \code{\link[ggplot2:ggtheme]{theme_bw}}.
 #' Defaults to 11.
 #' @importFrom grDevices gray
 #' @importFrom stats qnorm
@@ -263,17 +263,17 @@ plot_2Dheatmap <- function(model, plot_type = 1, plot_ci = TRUE, plot_ci_type = 
 #' Used for the legend.
 #' @param legend_title Title of legend
 #' @param col_palette Color palette to use in plot, see
-#' \code{\link[ggplot2]{scale_color_brewer}}. Only used if \code{nrow(newdata)>1}
+#' \code{\link[ggplot2:scale_colour_brewer]{scale_color_brewer}}. Only used if \code{nrow(newdata)>1}
 #' and if \code{is.null(col_vector)}.
 #' @param col_vector Vector of colors to use
 #' @param rev_cols If TRUE, the color palette is turned around.
-#' @param base_size Base size of plot elements, see \code{\link[ggplot2]{theme_bw}}.
+#' @param base_size Base size of plot elements, see \code{\link[ggplot2:ggtheme]{theme_bw}}.
 #' Defaults to 11.
 #' @param legend_symbol_size Size of symbols in legend. Default to 2
 #' @param type \code{type} argument for \code{\link[refund]{predict.pffr}}
 #' @param log10 If TRUE the predictions are shown on a log10 scale
 #' @param plot.margin Margin of the ggplot
-#' @param hline Vector of \code{\link[ggplot2]{geom_hline}}
+#' @param hline Vector of \code{\link[ggplot2:geom_abline]{geom_hline}}
 #' @param ybreaks Numeric vector of breaks for the y axis
 #' @param ylabels Character vector of labels for the y axis. Only used if
 #' \code{ybreaks} is specified
@@ -412,7 +412,7 @@ plot_predictions <- function(model, newdata, yvar, ci_type = "none", ci_alpha = 
 #' for Gamma regression.
 #' @param pi_alpha If \code{pi_type != "none"}, \code{1-pi_alpha}\% prediction
 #' intervals are plotted. Defaults to 0.05.
-#' @param base_size Base size of plot elements, see \code{\link[ggplot2]{theme_bw}}.
+#' @param base_size Base size of plot elements, see \code{\link[ggplot2:ggtheme]{theme_bw}}.
 #' Defaults to 11.
 #' @param xlab,ylab,main Optional arguments for plot annotation
 #' @param ybreaks,ylabels Optional specification of the tick position and the

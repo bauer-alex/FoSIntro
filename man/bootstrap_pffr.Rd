@@ -4,9 +4,10 @@
 \alias{bootstrap_pffr}
 \title{Perform bootstrap for smooth effects in \code{\link[refund]{pffr}} models}
 \usage{
-bootstrap_pffr(type = "parametric", B = 1000, formula, data, model = NULL,
-  param_yvar = NULL, cores = 1, param_simFun = "simulate",
-  param_yMinValue = NULL, log_file = NULL, ...)
+bootstrap_pffr(type = "parametric", B = 1000, formula, data,
+  model = NULL, param_yvar = NULL, cores = 1,
+  param_simFun = "simulate", param_yMinValue = NULL, log_file = NULL,
+  ...)
 }
 \arguments{
 \item{type}{One of \code{"parametric"} or \code{"nonparametric"}, specifying

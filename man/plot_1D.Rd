@@ -35,7 +35,7 @@ plot parameters}
 \item{effect_label}{Used in the main title of the plot as
 '\code{effect_label} with global 95\% CI'. Only used if \code{main} is not specified.}
 
-\item{base_size}{Size of plot elements. see \code{\link[ggplot2]{theme_bw}}.
+\item{base_size}{Size of plot elements. see \code{\link[ggplot2:ggtheme]{theme_bw}}.
 Defaults to 11.}
 }
 \description{
