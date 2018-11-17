@@ -24,6 +24,7 @@
 #' plot parameters
 #' @param effect_label Used in the main title of the plot as
 #' '\code{effect_label} with global 95\% CI'. Only used if \code{main} is not specified.
+#' @param shift Numeric shift of the plotted effect.
 #' @param base_size Size of plot elements. see \code{\link[ggplot2:ggtheme]{theme_bw}}.
 #' Defaults to 11.
 #' @importFrom grDevices gray
@@ -31,7 +32,7 @@
 #' @import ggplot2
 #' @export
 plot_1D <- function(model, plot_type = 1, plot_ci = TRUE, alpha = 0.05, CIs_list, select,
-                    xlab, ylab, ylim, main, effect_label, base_size = 11) {
+                    xlab, ylab, ylim, main, effect_label, shift = 0, base_size = 11) {
   if(class(model)[1] != "pffr")
     stop("Please specify a fitted pffr model as 'model'!")
   if(plot_type == 2 & missing(CIs_list))
@@ -43,10 +44,10 @@ plot_1D <- function(model, plot_type = 1, plot_ci = TRUE, alpha = 0.05, CIs_list
   if (length(select) == 1) {
     plotObject <- plotObject[[select]]
     plot_data <- data.frame("x" = plotObject$x,
-                            "fit" = plotObject$fit)
+                            "fit" = shift + plotObject$fit)
   } else if (length(select) == 2) {
     plot_data <- data.frame("x" = plotObject[[select[1]]]$x,
-                            "fit" = plotObject[[select[2]]]$fit - plotObject[[select[1]]]$fit)
+                            "fit" = shift + plotObject[[select[2]]]$fit - plotObject[[select[1]]]$fit)
     plotObject <- plotObject[[select[1]]]
     if (missing(main))
       main <- paste0("Difference between smooths ",select[2]," and ",select[1])
@@ -55,8 +56,8 @@ plot_1D <- function(model, plot_type = 1, plot_ci = TRUE, alpha = 0.05, CIs_list
   }
   if (plot_ci) {
     if (plot_type == 1 & length(select) == 1) {
-      plot_data$ci_lower <- plotObject$fit - qnorm(1-alpha/2)*plotObject$se
-      plot_data$ci_upper <- plotObject$fit + qnorm(1-alpha/2)*plotObject$se
+      plot_data$ci_lower <- shift + plotObject$fit - qnorm(1-alpha/2)*plotObject$se
+      plot_data$ci_upper <- shift + plotObject$fit + qnorm(1-alpha/2)*plotObject$se
       if(missing(main)) {
         main <- ifelse(missing(effect_label), plotObject$ylab, effect_label)
         if (plot_ci)

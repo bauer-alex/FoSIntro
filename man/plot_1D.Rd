@@ -5,7 +5,8 @@
 \title{Plot 1D smooth effects for \code{\link[refund]{pffr}} models}
 \usage{
 plot_1D(model, plot_type = 1, plot_ci = TRUE, alpha = 0.05, CIs_list,
-  select, xlab, ylab, ylim, main, effect_label, base_size = 11)
+  select, xlab, ylab, ylim, main, effect_label, shift = 0,
+  base_size = 11)
 }
 \arguments{
 \item{model}{Function-on-scalar model fitted with \code{\link[refund]{pffr}}}
@@ -34,6 +35,8 @@ plot parameters}
 
 \item{effect_label}{Used in the main title of the plot as
 '\code{effect_label} with global 95\% CI'. Only used if \code{main} is not specified.}
+
+\item{shift}{Numeric shift of the plotted effect.}
 
 \item{base_size}{Size of plot elements. see \code{\link[ggplot2:ggtheme]{theme_bw}}.
 Defaults to 11.}
