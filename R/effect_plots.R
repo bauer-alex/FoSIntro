@@ -332,7 +332,7 @@ plot_predictions <- function(model, newdata, yvar, ci_type = "none", ci_alpha = 
   # create dataset with confidence/prediction intervals
   if (ci_type != "none") {
     if (ci_type == "pi_norm") {
-      sigma2 <- var(as.vector(refund:::residuals.pffr(model, type = "response"))) # error variance
+      sigma2 <- var(as.vector(refund:::residuals.pffr(model, type = "response")), na.rm = T) # error variance
       plot_data %<>% mutate(se = sqrt(plot_data$se^2 + sigma2))
     }
     if (ci_type %in% c("ci","pi_norm")) {
