@@ -3,7 +3,7 @@
 # Install FoSIntro
 devtools::install_github("bauer-alex/FoSIntro")
 
-packages <- c("FoSIntro", "refund", "ggplot2", "grid", "gridExtra",
+packages <- c("FoSIntro", "refund", "mgcv", "ggplot2", "grid", "gridExtra",
               "dplyr", "tidyr", "magrittr")
 # install.packages(packages)
 sapply(packages, require, character.only = TRUE)
