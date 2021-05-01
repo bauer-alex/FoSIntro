@@ -1,6 +1,6 @@
 Package: FoSIntro
 Title: Convenience Functions for Semiparametric Function-on-Scalar Regression
-Version: 1.0.2
+Version: 1.0.3
 Authors@R: person("Alexander", "Bauer", email = "alexander.bauer@stat.uni-muenchen.de", role = c("aut", "cre"), comment=c(ORCID = "0000-0003-3495-5131"))
 Description: Supplementary code and functions for Bauer et al. (2017) 'An introduction to semiparametric function-on-scalar regression' and comprises several convenient functions for the workflow with function-on-scalar regression models estimated with 'refund::pffr'.
 Depends: R (>= 3.3.2)

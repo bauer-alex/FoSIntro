@@ -363,7 +363,6 @@ plot_predictions <- function(model, newdata, yvar, ci_type = "none", ci_alpha = 
     else
       gg <- gg + scale_fill_manual(name = legend_title, values = col_vector)
   }
-  scale_fill_manual(name = "Partei", values = rep("gray90",length(unique(polydat$label))))
   if (!missing(hline))
     gg <- gg + geom_hline(yintercept = hline, lty = 2, col = "grey", lwd = 1.1)
   if (log10)
