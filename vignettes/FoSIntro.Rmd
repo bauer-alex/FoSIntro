@@ -3,7 +3,7 @@ title: "Functionality of the FoSIntro package"
 author: "Alexander Bauer"
 date: "`r Sys.Date()`"
 output: 
-  pdf_document:
+  html_document:
     toc: true
     toc_depth: 2
     number_sections: true
@@ -158,6 +158,7 @@ plot_bootstrapCIs(model, CIs_list, select = 2, ylab = "time [s]")
 \pagebreak
 \subsection{Confidence intervals for the predicted mean}
 ```{r uncertainty 6}
+newdata <- data[1,colnames(data) != "ground_velocity"]
 plot_predictions(model, newdata, yvar = "ground_velocity", log10 = FALSE, ci_type = "ci",
                  xlab = "time [s]", ylab = "prediction on original scale")
 ```
