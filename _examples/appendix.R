@@ -195,11 +195,12 @@ plot_bootstrapCIs(model, CIs_list, select = 2, ylab = "time [s]")
 
 ### 2) Confidence intervals for the predicted mean
 newdata <- data[1,colnames(data) != "ground_velocity"]
-plot_predictions(model, newdata, log10 = FALSE, ci_type = "ci", # ybreaks = ybreaks,
+plot_predictions(model, newdata, yvar = "ground_velocity", log10 = FALSE,
+                 ci_type = "ci", # ybreaks = ybreaks,
                  xlab = "time [s]", ylab = "prediction on original scale")
 
 ### 3) prediction intervals
-plot_predictions(model, newdata, log10 = FALSE, ci_type = "pi",
+plot_predictions(model, newdata, yvar = "ground_velocity", log10 = FALSE, ci_type = "pi",
                  xlab = "time [s]", ylab = "prediction on original scale")
 # -> the pointwise prediction intervals in our application are much
 #    wider as the pointwise confidence intervals for the predicted mean!
