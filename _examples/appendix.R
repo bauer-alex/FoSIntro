@@ -26,7 +26,7 @@ data$index <- factor(1:nrow(data))
 # Not currently feasible with pffr for datasets of this size.
 
 # reshape data for some visualizations
-data_wide <- data %>%
+data_long <- data %>%
   select(-ground_velocity) %>%
   bind_cols(data$ground_velocity) %>%
   gather(key = "time", value = "ground_velocity", starts_with("y")) %>%
@@ -36,7 +36,7 @@ data_wide <- data %>%
 
 # Data visualization ------------------------------------------------------
 # Plot single observations
-gg <- data_wide %>%
+gg <- data_long %>%
   filter(seismometer %in% c(62,2524,5936), simulation == 88) %>%
   ggplot(aes(x=time, y=ground_velocity)) +
   geom_line() +
@@ -51,7 +51,7 @@ gg + facet_wrap(~ seismometer) +
 # to see seismometer-specific variation
 # Note: As the data only contains all simulations per seismometer where
 #       15 seconds >0 where observed the seismometers have different n's
-data_wide %>%
+data_long %>%
   filter(seismometer %in% c(62,2524,5936)) %>%
   ggplot(aes(x=time, y=ground_velocity, group=simulation)) +
   geom_line(alpha = 0.2) +
@@ -61,7 +61,7 @@ data_wide %>%
   ylab("ground velocity\non log10-scale")
 
 # Plot all observations for one simulation
-data_wide %>%
+data_long %>%
   filter(simulation == 88) %>%
   ggplot(aes(x=time, y=ground_velocity, group=seismometer)) +
   geom_line(alpha = 0.2) +
